@@ -1,0 +1,44 @@
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+* {
+    border: solid 1px black
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.display {
+    max-width: 250px;
+}
+
+.calculator {
+    display: grid;
+    grid-template-rows: 200px;
+    grid-template-columns: 150px 100px;
+}
+
+.input {
+    display: grid;
+    grid-template-rows: 50px 50px 50px 50px;
+    grid-template-columns: 50px 50px 50px;
+    
+}
+
+.functions {
+    display: grid;
+    grid-template-rows: 50px 50px 50px 50px;
+    grid-template-columns: 50px 50px;
+}
+
