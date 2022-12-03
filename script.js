@@ -29,18 +29,19 @@ let minusCounter = 0;
 
 function displayOpe(e) {
     if (minusCounter === 1 && e.target.textContent === "−" || minusCounter === 1 && e.target.textContent === "+") {
-        display.lastChild.firstChild.textContent += ` ${e.target.textContent}`;
-        minusCounter = 0;
-    } else {
+        display.lastChild.firstChild.textContent += `${e.target.textContent}`;
+        minusCounter = 0; 
+    } else if (minusCounter === 0){
     display.lastChild.firstChild.textContent += ` ${e.target.textContent} `;
-    minusCounter = 1;
+    minusCounter = 1; 
     }
 }
 
 function addText(e) {
     if (e.target.textContent.match(regexOpe)) {
         displayOpe(e);
-    } else {  
+        
+    } else if (+e.target.textContent){  
         display.lastChild.firstChild.textContent += e.target.textContent;
         minusCounter = 0;
     }       
@@ -100,32 +101,33 @@ function computeWithEnter() {
     console.log(screen)
     num += 1;
 } */
-
+let inputCounter = 0;
 function getInput(e) {
-    
-    str += e.target.textContent;
-    userInput = str.split('').filter(input => input !== " ");
-    
+    if (+e.target.textContent) {
+        str += e.target.textContent;
+        inputCounter = 0;
+    } else if (inputCounter === 1 && e.target.textContent === "−") {
+        str += "-"
+        inputCounter = 0;
+    } else if (inputCounter === 1 && e.target.textContent === "+") {
+        str += e.target.textContent
+        inputCounter = 0;
+    } else {
+        str += " " + e.target.textContent + " "
+        inputCounter = 1;
+    } 
+    userInput = str.split(" ");
+    console.log(str)
 }   
-let i1;
-let i2;
-function getNums(ope) {
-        /* let index = userInput.indexOf(ope);
 
-        console.log(index) */
+function getNums(ope) {
         num1 = userInput[userInput.indexOf(ope) - 1]
         num2 = userInput[userInput.indexOf(ope) + 1]
-        /* num1 = userInput.slice(userInput.indexOf(ope) - 1, userInput.indexOf(ope)).join("")
-        num2 = userInput.slice(userInput.indexOf(ope), userInput.length).join("") */
-        console.log(num1)
-        console.log(num2)
 }
 
 function compute(n1, n2, func) {
     return func(n1,n2)
 }
-
-
 
 function computeSequence(e) {
     getInput(e);
@@ -133,14 +135,11 @@ function computeSequence(e) {
         while (userInput.includes(key)) {   
             getNums(key)
             startIndex = userInput.indexOf(num1);
-
             userInput.splice(startIndex, 3, compute(Number(num1), Number(num2), operators[key]));
-            /* console.log(mulOpe)
-            console.log(str) */
-            console.log(userInput) 
-            break            
+                
         }
     })
+    console.log(userInput)
     /* mulOpe = str.match(regexNegPos)
         if (mulOpe) {         
         str = str.replace(mulOpe, "+") 
@@ -155,8 +154,7 @@ inputs.forEach(input => {
     input.addEventListener('click', e => computeSequence(e))
 })
 
-/* let strnew = "5 +5 +2";
-console.log(strnew.split('')) */
+
 
 
 
