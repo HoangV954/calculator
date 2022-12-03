@@ -19,14 +19,31 @@ function generateScreens(wrapper) {
 
         const screen2 = document.createElement('p');
         screen2.classList.add('result-screen')
-        screen2.textContent = "=";
         wrapper.appendChild(screen2)      
     }
 
 }
 
-function addText(e) {    
-    display.lastChild.firstChild.textContent += e.target.textContent;      
+let regexOpe = /[\×\÷\−\+]/g
+let minusCounter = 0;
+
+function displayOpe(e) {
+    if (minusCounter === 1 && e.target.textContent === "−" || minusCounter === 1 && e.target.textContent === "+") {
+        display.lastChild.firstChild.textContent += ` ${e.target.textContent}`;
+        minusCounter = 0;
+    } else {
+    display.lastChild.firstChild.textContent += ` ${e.target.textContent} `;
+    minusCounter = 1;
+    }
+}
+
+function addText(e) {
+    if (e.target.textContent.match(regexOpe)) {
+        displayOpe(e);
+    } else {  
+        display.lastChild.firstChild.textContent += e.target.textContent;
+        minusCounter = 0;
+    }       
     display.lastChild.firstChild.scrollLeft = display.lastChild.firstChild.scrollWidth
 }
 
@@ -51,64 +68,95 @@ enter.addEventListener('click', (e) => {
     const newScreen = document.createElement('div');
     newScreen.classList.add('big-screen')
     generateScreens(newScreen)
-    display.lastChild.style.cssText = `order: ${order}`;  
+    display.lastChild.style.cssText = `order: ${order}`;
+    
 })
 
 //+ = 0; each time = 1; number = 0. For catching errors later
 
 //Math operations
-const operation = {
-    'x': (arg1, arg2) => arg1*arg2,
+const operators = {
+    '.': (arg1, arg2) => Number(arg1 + "." + arg2),
+    '×': (arg1, arg2) => arg1*arg2,
     '÷': (arg1, arg2) => arg1/arg2,
-    '-': (arg1, arg2) => arg1-arg2,
-    '+': (arg1, arg2) => arg1+arg2,    
+    '−': (arg1, arg2) => arg1-arg2,
+    '+': (arg1, arg2) => Number(arg1)+Number(arg2),    
 }
-
 
 let str = '';
-let userInput = 0;
+let userInput;
 let num1;
 let num2;
-let newUserInput;
 let startIndex;
-let endIndex;
-/* function getArrayFromInput(e) {
+let regexNegPos = /(\+|\−){3,}/g
+let regexTwoOpe = /(\+|\−|\×|\÷){2}/g
+let mulOpe;
+let negOpe;
+
+//This is to take input from pressing enter. Alternative to getting inputs from clicks, which we will use in this case since it's more responsive in delivering result
+/* let num = 0;
+function computeWithEnter() {
+    const screen = document.getElementsByClassName('input-screen')[num]
+    console.log(screen)
+    num += 1;
+} */
+
+function getInput(e) {
+    
     str += e.target.textContent;
-}
- */
+    userInput = str.split('').filter(input => input !== " ");
+    
+}   
+let i1;
+let i2;
+function getNums(ope) {
+        /* let index = userInput.indexOf(ope);
 
-
-console.log(str)
-
-
-
-/* Object.keys(operation).forEach(key => {
-    while (userInput.includes(key)) {
-        getIndex(key)
-        //console.log(operation[key])
+        console.log(index) */
+        num1 = userInput[userInput.indexOf(ope) - 1]
+        num2 = userInput[userInput.indexOf(ope) + 1]
+        /* num1 = userInput.slice(userInput.indexOf(ope) - 1, userInput.indexOf(ope)).join("")
+        num2 = userInput.slice(userInput.indexOf(ope), userInput.length).join("") */
         console.log(num1)
         console.log(num2)
-        startIndex = userInput.indexOf(num1)
-        endIndex = userInput.indexOf(num2)
-        console.log(compute(num1, num2, operation[key]))
-        userInput.splice(startIndex, 3, compute(num1, num2, operation[key]))
-        
-        console.log(userInput)
-    }
-})
-
-function getIndex(ope) {
-    num1 = userInput[userInput.indexOf(ope) - 1];
-    num2 = userInput[userInput.indexOf(ope) + 1]; 
-}
-
-function merge(first, second, comp) {
-    userInput
 }
 
 function compute(n1, n2, func) {
     return func(n1,n2)
-} */
+}
+
+
+
+function computeSequence(e) {
+    getInput(e);
+    Object.keys(operators).forEach(key => {
+        while (userInput.includes(key)) {   
+            getNums(key)
+            startIndex = userInput.indexOf(num1);
+
+            userInput.splice(startIndex, 3, compute(Number(num1), Number(num2), operators[key]));
+            /* console.log(mulOpe)
+            console.log(str) */
+            console.log(userInput) 
+            break            
+        }
+    })
+    /* mulOpe = str.match(regexNegPos)
+        if (mulOpe) {         
+        str = str.replace(mulOpe, "+") 
+        } */
+    display.lastChild.lastChild.textContent = `= ${userInput} `
+}
+
+math.forEach((func) => {
+    func.addEventListener('click', e => computeSequence(e))
+})
+inputs.forEach(input => {
+    input.addEventListener('click', e => computeSequence(e))
+})
+
+/* let strnew = "5 +5 +2";
+console.log(strnew.split('')) */
 
 
 
