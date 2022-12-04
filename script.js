@@ -24,9 +24,9 @@ function generateScreens(wrapper) {
 
 }
 
-let regexOpe = /[\×\÷\−\+]/g
+let regexOpe = /(\×|\÷|\−|\+)/g
 let minusCounter = 0;
-
+//(\x|\÷)(\−|\-|\+){2,}
 function displayOpe(e) {
     if (minusCounter === 1 && e.target.textContent === "−" || minusCounter === 1 && e.target.textContent === "+") {
         display.lastChild.firstChild.textContent += `${e.target.textContent}`;
@@ -41,7 +41,7 @@ function addText(e) {
     if (e.target.textContent.match(regexOpe)) {
         displayOpe(e);
         
-    } else if (+e.target.textContent){  
+    } else if (+e.target.textContent || e.target.textContent === "." || e.target.textContent === "0"){  
         display.lastChild.firstChild.textContent += e.target.textContent;
         minusCounter = 0;
     }       
@@ -73,15 +73,26 @@ enter.addEventListener('click', (e) => {
     
 })
 
-//+ = 0; each time = 1; number = 0. For catching errors later
 
 //Math operations
 const operators = {
-    '.': (arg1, arg2) => Number(arg1 + "." + arg2),
+    //'.': (arg1, arg2) => Number(arg1 + "." + arg2),
+    
+    '×+': (arg1, arg2) => arg1*arg2,
+    '×-': (arg1, arg2) => arg1*(-arg2),
+    '×−': (arg1, arg2) => arg1*(-arg2),
     '×': (arg1, arg2) => arg1*arg2,
+    '÷+': (arg1, arg2) => arg1/arg2,
+    '÷-': (arg1, arg2) => arg1/(-arg2),
+    '÷−': (arg1, arg2) => arg1/(-arg2),
     '÷': (arg1, arg2) => arg1/arg2,
     '−': (arg1, arg2) => arg1-arg2,
-    '+': (arg1, arg2) => Number(arg1)+Number(arg2),    
+    '-': (arg1, arg2) => arg1-arg2,
+    '+': (arg1, arg2) => Number(arg1)+Number(arg2),
+    '+-': (arg1, arg2) => arg1-arg2,
+    '+−': (arg1, arg2) => arg1-arg2,
+    '-+': (arg1, arg2) => arg1-arg2,
+    '−+': (arg1, arg2) => arg1-arg2,
 }
 
 let str = '';
@@ -89,10 +100,7 @@ let userInput;
 let num1;
 let num2;
 let startIndex;
-let regexNegPos = /(\+|\−){3,}/g
-let regexTwoOpe = /(\+|\−|\×|\÷){2}/g
-let mulOpe;
-let negOpe;
+
 
 //This is to take input from pressing enter. Alternative to getting inputs from clicks, which we will use in this case since it's more responsive in delivering result
 /* let num = 0;
@@ -101,28 +109,105 @@ function computeWithEnter() {
     console.log(screen)
     num += 1;
 } */
-let inputCounter = 0;
+
+let opeCounter = 0;
+let numCounter = 0;
+
 function getInput(e) {
-    if (+e.target.textContent) {
+    if (e.target.textContent.match(regexOpe) && opeCounter === 0) {
+        str += " " + e.target.textContent;
+        opeCounter = 1;
+    } else if (e.target.textContent.match(regexOpe) && opeCounter === 1) {
         str += e.target.textContent;
-        inputCounter = 0;
-    } else if (inputCounter === 1 && e.target.textContent === "−") {
-        str += "-"
-        inputCounter = 0;
-    } else if (inputCounter === 1 && e.target.textContent === "+") {
-        str += e.target.textContent
-        inputCounter = 0;
-    } else {
-        str += " " + e.target.textContent + " "
-        inputCounter = 1;
+        numCounter = 1;
+    } else if ((parseInt(e.target.textContent) || e.target.textContent === "." || e.target.textContent === "0") && numCounter === 1 && opeCounter === 1) {
+        str += " " + e.target.textContent;
+        opeCounter = 0;
+        numCounter = 0
+    } else if ((parseInt(e.target.textContent) || e.target.textContent === "." || e.target.textContent === "0") && numCounter === 0 && opeCounter === 0) {
+        str += e.target.textContent;
+    } else if ((parseInt(e.target.textContent) || e.target.textContent === "." || e.target.textContent === "0") && numCounter === 0 && opeCounter === 1) {
+        str += " " + e.target.textContent;
+        opeCounter = 0;
     } 
-    userInput = str.split(" ");
-    console.log(str)
-}   
+    userInput = str.split(" ").filter(char => char !== '');
+}
+
+let regexPos = /(\+){2,}/g
+let regexNeg = /(\−|\-){2,}/g
+let regexMulDivPos = /(\×|\÷)(\+){2,}/g
+let regexMulDivNeg = /(\×|\÷)(\−|\-){2,}/g
+let regexDiv = /(\÷){1}/g
+let regexMul = /(\×){1}/g
+let regexMulDiv = /(\×){1}|(\÷){1}/g
+
+let errorDiv = /(\÷){2,}/g
+let errorMul = /(\×){2,}/g
+
+function fixInput() {
+    for (let i = 0; i < userInput.length; i++) {
+
+        if (userInput[i].match(errorDiv) || userInput[i].match(errorMul)) {
+            console.log("an l`")
+        }
+
+
+        if (userInput[i].match(regexMulDiv)) {
+            if (userInput[i].match(regexDiv) && userInput[i].match(regexMul)){
+                console.log("Hoc lai phep nhan de")
+            }
+            else if (userInput[i].match(regexDiv) && userInput[i].indexOf("÷") !== 0 || userInput[i].match(regexMul) &&userInput[i].indexOf("×") !== 0) {
+                console.log("Con me may ngu")
+                console.log(userInput[i].indexOf("×"))
+            }
+            
+        }
+
+        if (userInput[i].match(regexMulDivPos) || userInput[i].match(regexMulDivNeg)) {
+            let minus2 = userInput[i].split("").filter(ope => ope === "-" | ope === "−")
+            if (userInput[i][0] === "×") {
+                if (minus2.length % 2 === 0) {
+                    userInput.splice(i, 1, "×-")
+                } else {
+                    userInput.splice(i, 1, "×+")
+                }
+            }      
+            else if (userInput[i][0] === '÷') {
+                if (minus2.length % 2 === 0) {
+                    userInput.splice(i, 1, "÷-")
+                } else {
+                    userInput.splice(i, 1, "÷+")
+                }
+            }
+        }
+
+        if (userInput[i].match(regexPos) && userInput[i].match(regexNeg)) { 
+            let minus = userInput[i].split("").filter(ope => ope === "-" | ope === "−")
+            
+            if (minus.length % 2 === 0) {
+                userInput.splice(i, 1, "-")
+            } else {
+                userInput.splice(i, 1, "+")
+            }   
+        } else if (userInput[i].match(regexPos)) {
+            userInput.splice(i, 1, "+")
+        }
+
+        //if (x){}
+    }
+    console.log(userInput)
+}
 
 function getNums(ope) {
+    if (userInput[userInput.indexOf(ope) - 1] === undefined) {
+        num1 = 0
+        num2 = userInput[userInput.indexOf(ope) + 1]
+        startIndex = userInput.indexOf(ope);
+    } else {
         num1 = userInput[userInput.indexOf(ope) - 1]
         num2 = userInput[userInput.indexOf(ope) + 1]
+        startIndex = userInput.indexOf(num1);
+    }
 }
 
 function compute(n1, n2, func) {
@@ -131,20 +216,25 @@ function compute(n1, n2, func) {
 
 function computeSequence(e) {
     getInput(e);
+    fixInput()
     Object.keys(operators).forEach(key => {
-        while (userInput.includes(key)) {   
+        while (userInput.includes(key) && userInput.length >= 2) { 
             getNums(key)
-            startIndex = userInput.indexOf(num1);
-            userInput.splice(startIndex, 3, compute(Number(num1), Number(num2), operators[key]));
+            
+                userInput.splice(startIndex, 3, compute(Number(num1), Number(num2), operators[key]));
                 
+            
         }
-    })
-    console.log(userInput)
-    /* mulOpe = str.match(regexNegPos)
-        if (mulOpe) {         
-        str = str.replace(mulOpe, "+") 
-        } */
-    display.lastChild.lastChild.textContent = `= ${userInput} `
+    }) 
+    console.log(userInput)  
+    for (let i = 0; i < userInput.length; i++) {
+
+        if (userInput[i].match(errorDiv) || userInput[i].match(errorMul)) {
+            display.lastChild.lastChild.textContent = "an l`"
+        } else if (3 < 2) {
+            display.lastChild.lastChild.textContent = `= ${userInput} `
+        }
+    }
 }
 
 math.forEach((func) => {
