@@ -3,10 +3,13 @@
     margin: 0;
     padding: 0;
 }
-/* Having border is sometimes dangerous, like optical illusion. Delete it once in a while to see if there's really a problem */
-* {
-    border: solid 1px black
+
+@font-face {
+    font-family: digitalCalc;
+    src: url(digital-7.regular.ttf);
 }
+/* Having border is sometimes dangerous, like optical illusion. Delete it once in a while to see if there's really a problem */
+
 
 body {
     display: flex;
@@ -15,56 +18,381 @@ body {
     height: 100vh;
 }
 
+/* ------------------------------------------------------------------------ */
+::-webkit-scrollbar {
+    width: 0px;/* for hidden bars */
+    /* background: transparent; */
+    height: 0px;/* for hidden bars */
+}
 
 /* Display screens */
+
+.cover {
+    position: relative;
+}
 
 .display {
     display: flex;
     flex-direction: column-reverse;
-    height: 100px;
-    width: 280px;
-    max-height: 100px;
-    overflow-y: scroll;
-    max-height: 100px;    
+    height: 420px;
+    width: 480px;
+    max-height: 280px;
+    overflow-y: scroll; 
+    font-family: digitalCalc;
+    border: 1px solid #cacaca;
 }
 
 .big-screen {
     display: flex;
-    flex-shrink: 0;
-    
+
 }
 
 .input-screen {
-    flex-grow: 3;
-    flex-basis: 200px;
+    display: flex;
+    width: 100%;
     overflow-x: auto;
+    align-items: center;
+    position: relative;/* Need position relative or absolute to apply z-index. In this case let the text bubble be placed on top */
+    z-index: 0;
+    white-space: nowrap; /* for example 9999 cannot overflow into new line, but 9999 +" " +"+" can, so we need whitespace prop */
+    border: 1px solid #cacaca;
+    border-right: none;
 }
+
 
 .result-screen {
-    flex-grow: 1;
-    flex-shrink: 0;
-    flex-basis: 80px;
-    text-align: right;
-    
+    display: flex;
+    width: fit-content;
+    text-align: right;  
+    justify-content: flex-end;
+    align-items: center;
+    white-space: nowrap; 
+    border: 1px solid #cacaca;
+    border-left: none;
 }
 
-p { 
-    overflow-y: hidden; 
-    max-height: 200px;
-    
-    height:50px;
+.input-screen, .result-screen { 
+    height:70px;
+    max-height: 70px;
 }
 
-/* input {
+/* ------------------------------------------------------------------------ */
+/* Tool tip */
+.tooltip {
+    align-self: center;
+    position: relative;
+    font-size: 20px;
+}
+
+.tooltip > .tooltip-text {
+    visibility: hidden;
+    background-color: grey;
+    border-color: grey;
+    color: white;
+    text-align: center;
+    border-radius: 8px;
+    padding: 2px 0;
+    position: absolute;
+    z-index: 1;
+    /* transform:translate(-160px, -15px); */
+    transform:translate(-135px, -40px);
+    /* top: 5px;
+    right: 110%; */ /* Can use transform translate instead of these */
+    font-size: 12px;
+    /* display: inline-block; */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-inline-size: 120px; /* Very important to have text wrap for tooltip while keeping position absolute, haven't tested with flexboxa*/
+    width: 120px;
+    white-space: normal;
+    font-size: 15px;
+    height: 55px;
+    /* vertical-align: middle; */ /* Work with inline but somehow doesn't work here */
+}
+
+.tooltip .tooltip-text::after {
+    content: "";
+    position: absolute;
+    left: 100%;
+    top: 50%;
+    margin-top: -8px;
+    border-width: 10px;
+    border-style: solid;
+    border-color: transparent transparent transparent grey;
+}
+
+.tooltip:hover .tooltip-text {
+
+    visibility: visible;
+}
+/* For text box if ever implemented
+input {
     outline: none
 } */
 
 /* Calculator buttons */
 
 .calculator {
-    display: grid;
-    grid-template: repeat(4, 50px) / repeat(5, 50px);
-    gap: 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    height: 300px;
+    background-color: #ededed;
+    border:1px solid #cacaca;
 }
 
+.bar {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding-right: 30px;
+    margin-top: 5px;
+}
+
+
+.switch {
+    margin-left: 6px;
+}
+
+.calc-container {
+    display: flex;
+    justify-content: space-around;
+    padding: 30px auto 30px;
+}
+
+.left-side {
+    display: grid;
+    grid: repeat(4, 50px) / repeat(4, 50px);
+    grid-gap: 5px;
+}
+
+.num {
+    background-color: #cacaca;
+}
+
+.right-side {
+    display: grid;
+    grid-gap: 5px;
+    grid: repeat(4, 50px) / repeat(3, 40px);
+}
+/* Grid area cannot make an L shape */
+.reset {
+    grid-column: 1 / span 3;  
+    font-size: 30px;
+}
+
+.delete {
+
+    grid-column: 1 / span 3;
+    
+}
+
+.cur-total {
+
+    grid-column: 1 / span 1;
+
+}
+
+.equal-1 {
+    margin-bottom: -5px; /* Removing gap with negative margin */
+    grid-row: 3 / span 1;
+    grid-column: 2 / span 2;
+    border-bottom: #f0f0f0;
+    background-color: #2f72dc;
+}
+
+.equal-2 {
+    position: relative;
+    grid-column: 1 / span 3;
+    background-color: #2f72dc;
+}
+
+img {
+    position: absolute;
+    width: 30px;
+    height: 20px;
+    bottom: 13px;
+    right: 90px;
+}
+/*On / Off slider for decimals */
+
+
+.switch { /* Overall container - Mostly for the slider width and height */
+    position: relative;
+    display: inline-block;
+    width: 80px;
+    height: 28px;
+}
+
+input { /* Input is collapsed so it disappears. It is still clickable since <label> reference its children (can also be done by having for="test" in label and id="test" for input child outside of label tags) during the event. Meaning clicking other children ALL activated the effect of input */
+    /* opacity: 0;
+    width: 0;
+    height: 0; */
+    display: none; /* Shorter alternative to the settings above */
+}
+
+.slider {/* Mostly to adjust the background color IN FRONT of the slider - before sliding - default*/
+    position: absolute;
+    content: "";
+    top: 0;/* Normally it stays in the same space as input, with these settings it expands as the background */
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #a21b1b;
+    transition: 0.8s; /* Adjust the speed of slider's background color changing */
+    cursor: pointer;
+}
+
+.slider::before { /* Slider itself(Size etc...) */
+    content: '';
+    position: absolute;
+    height: 20px;
+    width: 20px;
+    top: 3.5px; /* Create faux padding for slider */
+    left: 5px;
+    bottom: 4px;
+    background-color: black;
+    transition: 0.8s; /* Adjust the speed of slider */
+}
+
+.slider::after { /* Create text */
+    display: block;
+    content: 'NO';
+    position: absolute;
+    transform: translate(-50%,-50%); /* Only with this will the text transform after the check */
+    top: 45%; /* align into the middle */
+    left: 50%;
+    color: wheat;
+    font-size: 10px;
+    font-family: Verdana, sans-serif;
+}
+
+input:checked + .slider::after {
+    content: 'YES'
+
+}
+
+input:checked + .slider {
+    background-color: #22942a;
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px #22942a;
+}
+
+input:checked + .slider::before { /* Move the slider to the left */
+    transform: translateX(50px);
+}
+
+
+/* To make slider holder a bit round and a circle (::before) as the slider */
+.round {
+    border-radius: 34px; 
+}
+
+.round::before {
+    border-radius: 50%;
+} 
+
+/* ------------------------------------------------------------------------ */
+/* Arrow helper */
+.helper {
+    height: 100px;
+    width: 100px;
+    position: absolute;
+    left: 350px;
+    top: 100px;
+}
+
+.helper-text {
+    position: relative;
+    width: 200px;
+    right: 100px;
+    top: 50px;
+}
+.arrow {/* container for the arrow */
+    position: relative;
+    width: 100px;
+    left: 45px;
+    top: 40px;
+}
+
+.arrow .curve {/* Basically a rectangular that is only visible on the left side - Meaning that arrow will curve to the left */
+    border: 2px solid grey;
+    border-color: transparent transparent transparent grey; /* top | right | bottom | left */
+    height: 50px;/* rect shape */
+    width: 200px;
+    border-radius: 230px 0 0 150px; /* top-left | top-right | bottom-right | bottom-left  - Rounding all the left portions*/
+}
+
+.arrow .tip { /* Start out as a line */
+    position: absolute; /* Base of the arrow tip, keep the minimum width so it doesn't interfere with the arrow. No transformation of any kind as it will alter arrow tips positions*/
+}
+
+.arrow .tip::before, .arrow .tip::after {
+    content: "";
+    border: 0.5px solid grey;
+    height: 10px;
+    position: absolute;
+}
+
+.arrow .tip::before {
+    bottom: 3px;
+    transform: rotate(-74deg);
+}
+
+.arrow .tip::after {
+    bottom: 6px;
+    left: 5px;
+    transform: rotate(14deg);
+}
+/* button format */
+
+button {
+    cursor: pointer;
+    font-family: Arial, sans-serif;
+    
+}
+
+.num:hover {
+    background: rgba(134, 134, 133, 0.5);
+}
+
+.math, .decimal, .square-r, .cur-total, .delete, .reset {
+    border-color: #cacaca;
+    border-radius: 3px;
+}
+
+
+.math:hover, .cur-total:hover, .decimal:hover, .square-r:hover {
+    background: rgba(230, 230, 220, 0.7);
+    
+}
+
+.desc, sup {
+    font-family: digitalCalc;
+}
+
+.numBar {
+    font-size: 25px;
+}
+
+.num {
+    border: none;
+    border-radius: 3px;
+}
+
+.equal {
+    border-color: #2f72dc;
+}
+
+.equal-1 {
+    border-radius: 3px 3px 0 0; /* top left - top right */
+}
+
+.equal-2 {
+    border-radius: 3px 0 3px 3px;
+}
+/* Fire and Ice */
 

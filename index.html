@@ -7,37 +7,65 @@
     <title>Document</title>
     <link rel="stylesheet" href="style.css">
     <script src="script.js" defer></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 
 <body>
+    
+
     <div class="cover">
-        
+
+        <div class="helper" id="helper">
+            <div class="helper-text">Your answer will show up here</div>
+            <div class="arrow">
+                <div class="curve"></div>
+                <div class="tip"></div>
+            </div>
+        </div>
+
         <div class="display"></div>
 
-        <div class="calculator">       
-                <button class="num inputs">7</button>
-                <button class="num inputs">8</button>
-                <button class="num inputs">9</button>
-                <button class="delete">DEL</button>
-                <button class="reset">AC</button>
-                <button class="num inputs">4</button>
-                <button class="num inputs">5</button>
-                <button class="num inputs">6</button>
-                <button class="multiply math">&times;</button>
-                <button class="divide math">&divide;</button>
-                <button class="num inputs">1</button>
-                <button class="num inputs">2</button>
-                <button class="num inputs">3</button>
-                <button class="add math">&plus;</button>
-                <button class="minus math">&minus;</button>
-                <button class="num inputs">0</button>
-                <button class="decimal inputs">.</button>
-                <button class="square-r inputs">&radic;</button>
-                <button class="cur-total math">ans</button>
-                <button class="equal">=</button>        
+        
+
+        <div class="calculator">  
+            <div class="bar">
+                <div class="desc">x<span class="numBar">10^</span><sup>x</sup></div>
+                <label class="switch">
+                    <input type="checkbox">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+
+            <div class="calc-container">
+                <div class="left-side">       
+                    <button class="num inputs">7</button>
+                    <button class="num inputs">8</button>
+                    <button class="num inputs">9</button>
+                    <button class="multiply math">&times;</button>
+                    <button class="num inputs">4</button>
+                    <button class="num inputs">5</button>
+                    <button class="num inputs">6</button>
+                    <button class="divide math">&divide;</button>
+                    <button class="num inputs">1</button>
+                    <button class="num inputs">2</button>
+                    <button class="num inputs">3</button>
+                    <button class="minus math">&minus;</button>
+                    <button class="num inputs">0</button>
+                    <button class="decimal inputs">.</button>               
+                    <button class="square-r inputs">&radic;</button>
+                    <button class="add math">&plus;</button>
+                </div>
+
+                <div class="right-side"> 
+                    <button class="reset fire">&#8635;</button>
+                    <button class="delete ice"><i class="material-icons" style="font-size:36px">backspace</i></button>      
+                    <button class="cur-total inputs">ans</button>
+                    <button class="equal equal-1"></button>
+                    <button class="equal equal-2"><img src="white-arrow.png"></button>
+                </div>   
+            </div>     
+
         </div>
-        
-        
     </div>
 </body>
 </html>
