@@ -4,7 +4,7 @@
 
 ### Find out how much it costs right [here!](https://hoangv954.github.io/calculator/)
 
-###Notable features:
+### Notable features:
 
 - Multiple operators accepted
 - Support a large number of operations at once
