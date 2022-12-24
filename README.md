@@ -4,6 +4,10 @@
 
 ### Find out how much it costs right [here!](https://hoangv954.github.io/calculator/)
 
+### **Sneak peek?** 
+
+!!!<details><summary>PROJECT PREVIEW</summary> 
+![calculator](https://user-images.githubusercontent.com/114508394/209420036-cdcf1e60-5b44-4805-8ce4-eb786bf204b1.PNG) </details>!!!
 
 
 ### Notable features:
